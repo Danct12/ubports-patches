@@ -1,0 +1,76 @@
+From edb457947f40813f6773ad1c0a35851fc7593779 Mon Sep 17 00:00:00 2001
+From: Danct12 <danct12@disroot.org>
+Date: Mon, 28 Oct 2019 09:51:48 +0700
+Subject: [PATCH] qmp: sphinx: Remove QMP from some part of the kernel.
+
+We really don't need this on UBports..
+
+Signed-off-by: Danct12 <danct12@disroot.org>
+---
+ fs/proc/base.c | 7 -------
+ net/socket.c   | 3 ---
+ 2 files changed, 10 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index dcdef3a3..89922976 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -87,7 +87,6 @@
+ #include <linux/slab.h>
+ #include <linux/flex_array.h>
+ #include <linux/posix-timers.h>
+-#include <linux/qmp_sphinx_instrumentation.h>
+ #ifdef CONFIG_HARDWALL
+ #include <asm/hardwall.h>
+ #endif
+@@ -962,9 +961,6 @@ static ssize_t oom_adj_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
+ 
+-	qmp_sphinx_logk_oom_adjust_write(task->pid,
+-			task->cred->uid, oom_adj);
+-
+ 	task_lock(task);
+ 	if (!task->mm) {
+ 		err = -EINVAL;
+@@ -1068,9 +1064,6 @@ static ssize_t oom_score_adj_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
+ 
+-	qmp_sphinx_logk_oom_adjust_write(task->pid,
+-			task->cred->uid, oom_score_adj);
+-
+ 	task_lock(task);
+ 	if (!task->mm) {
+ 		err = -EINVAL;
+diff --git a/net/socket.c b/net/socket.c
+index 0e9f6ddd..27f90d98 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -88,7 +88,6 @@
+ #include <linux/magic.h>
+ #include <linux/slab.h>
+ #include <linux/xattr.h>
+-#include <linux/qmp_sphinx_instrumentation.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/unistd.h>
+@@ -1793,7 +1792,6 @@ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
+ 	struct iovec iov;
+ 	int fput_needed;
+ 
+-	qmp_sphinx_logk_sendto(fd, buff, len, flags, addr, addr_len);
+ 
+ 	if (len > INT_MAX)
+ 		len = INT_MAX;
+@@ -1856,7 +1854,6 @@ SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, ubuf, size_t, size,
+ 	int err, err2;
+ 	int fput_needed;
+ 
+-	qmp_sphinx_logk_recvfrom(fd, ubuf, size, flags, addr, addr_len);
+ 
+ 	if (size > INT_MAX)
+ 		size = INT_MAX;
+-- 
+2.23.0
+
